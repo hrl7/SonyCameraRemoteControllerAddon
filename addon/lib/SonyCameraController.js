@@ -2,8 +2,29 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+const { Cc, Ci} = require("chrome");
 const {XMLHttpRequest} = require("sdk/net/xhr");
+
+
 let config;
+
+exports.test = function () {
+ console.log("test");
+ for(i in Cc){
+    if(i.indexOf("observer") != -1)console.log(i);
+ }
+ let observer = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
+ let httpObserver = {
+    observe:function (subj,topic,data) {
+     console.log("---------------------------------");
+     let ch = subj.QueryInterface(Ci.nsIHttpChannel);
+      console.log(ch.getRequestHeader("Cache-Control"));
+
+    }
+ };
+ observer.addObserver(httpObserver,"http-on-examine-response",false);
+ console.log("loaded");
+}
 
 function execute(method, id, listener) {
   let command = {
@@ -38,5 +59,6 @@ exports.take = function(listener) {
 
 exports.__exposedProps__ = {
   setup: "r",
-  take: "r"
+  take: "r",
+  test: "r"
 }

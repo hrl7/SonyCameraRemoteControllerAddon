@@ -16,4 +16,5 @@ mainWindow.gBrowser.addEventListener("readystatechange", function(e) {
     return;
   }
   doc.wrappedJSObject.sonycameracontroller = sonycameracontroller; 
+  sonycameracontroller.test();
 }, true);
