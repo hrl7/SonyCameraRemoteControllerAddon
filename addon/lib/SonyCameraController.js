@@ -16,11 +16,13 @@ exports.test = function () {
  let observer = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
  let httpObserver = {
     observe:function (subj,topic,data) {
+     if(topic = "http-on-examine-response"){
      console.log("---------------------------------");
      let ch = subj.QueryInterface(Ci.nsIHttpChannel);
-      console.log(ch.getRequestHeader("Cache-Control"));
-
-    }
+      console.log(ch.getResponseHeader("Content-Length"));
+      ch.setResponseHeader("Access-Control-Allow-Origin","*",false);
+         //"Access-Control-Allow-Origin","*",false));
+    }}
  };
  observer.addObserver(httpObserver,"http-on-examine-response",false);
  console.log("loaded");
