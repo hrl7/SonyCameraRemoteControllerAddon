@@ -18,7 +18,7 @@ function execute(method, id, listener) {
     if (listener) {
       let response = JSON.parse(request.responseText);
       let url = response.result[0][0];
-      listener.taken(url);
+      listener.taken(url,response);
     }
   };
   let url = "http://"+config.ipaddress+":"+config.port+"/sony/camera";
