@@ -19,8 +19,8 @@ exports.test = function () {
      if(topic = "http-on-examine-response"){
      console.log("---------------------------------");
      let ch = subj.QueryInterface(Ci.nsIHttpChannel);
-      console.log(ch.getResponseHeader("Content-Length"));
       ch.setResponseHeader("Access-Control-Allow-Origin","*",false);
+      ch.setResponseHeader("Access-Control-Allow-Methods","POST,GET",false);
          //"Access-Control-Allow-Origin","*",false));
     }}
  };
