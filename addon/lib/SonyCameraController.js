@@ -17,9 +17,8 @@ exports.test = function () {
  let httpObserver = {
     observe:function (subj,topic,data) {
      if(topic = "http-on-examine-response"){
-     console.log("---------------------------------");
      let ch = subj.QueryInterface(Ci.nsIHttpChannel);
-      ch.setResponseHeader("Access-Control-Allow-Origin","*",false);
+      ch.setResponseHeader("Access-Control-Allow-Origin","http://webservice.fabnavi.org",false);
       ch.setResponseHeader("Access-Control-Allow-Methods","POST,GET",false);
          //"Access-Control-Allow-Origin","*",false));
     }}
