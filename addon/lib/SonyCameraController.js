@@ -9,28 +9,27 @@ const {XMLHttpRequest} = require("sdk/net/xhr");
 let config;
 
 exports.test = function () {
- console.log("test");
  for(i in Cc){
     if(i.indexOf("observer") != -1)console.log(i);
  }
  let observer = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
  let httpObserver = {
-    observe:function (subj,topic,data) {
-     if(topic = "http-on-examine-response"){
-     let ch = subj.QueryInterface(Ci.nsIHttpChannel);
-      ch.setResponseHeader("Access-Control-Allow-Origin","http://webservice.fabnavi.org",false);
-      ch.setResponseHeader("Access-Control-Allow-Methods","POST,GET",false);
-         //"Access-Control-Allow-Origin","*",false));
-    }}
+  observe:function (subj,topic,data) {
+   if(topic = "http-on-examine-response"){
+    let ch = subj.QueryInterface(Ci.nsIHttpChannel);
+    //ch.setResponseHeader("Access-Control-Allow-Origin","http://webservice.fabnavi.org",false);
+    ch.setResponseHeader("Access-Control-Allow-Origin","*",false);
+    ch.setResponseHeader("Access-Control-Allow-Methods","POST,GET",false);
+   }}
  };
  observer.addObserver(httpObserver,"http-on-examine-response",false);
  console.log("loaded");
 }
 
-function execute(method, id, listener) {
+function execute(method,params id, listener) {
   let command = {
     method: method, 
-    params: [], 
+    params: params, 
     id: id,
     version: config.version
   } 
@@ -51,11 +50,14 @@ function execute(method, id, listener) {
 
 exports.setup = function(c) {
   config = c;
-  execute("startRecMode", 1);
+  execute("startRecMode",[], 1);
+  execute("setPostviewImageSize",["Original"],10);
+  execute("setShootMode",["still"],10);
+  execute("setBeepMode",["On"],10);
 }
 
 exports.take = function(listener) {
-  execute("actTakePicture", 2, listener);
+  execute("actTakePicture",[], 2, listener);
 }
 
 exports.__exposedProps__ = {
