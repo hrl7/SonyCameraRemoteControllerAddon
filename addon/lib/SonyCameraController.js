@@ -9,9 +9,6 @@ const {XMLHttpRequest} = require("sdk/net/xhr");
 let config;
 
 exports.test = function () {
- for(i in Cc){
-    if(i.indexOf("observer") != -1)console.log(i);
- }
  let observer = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
  let httpObserver = {
   observe:function (subj,topic,data) {
@@ -23,10 +20,9 @@ exports.test = function () {
    }}
  };
  observer.addObserver(httpObserver,"http-on-examine-response",false);
- console.log("loaded");
 }
 
-function execute(method,params id, listener) {
+function execute(method,params, id, listener) {
   let command = {
     method: method, 
     params: params, 
@@ -50,18 +46,39 @@ function execute(method,params id, listener) {
 
 exports.setup = function(c) {
   config = c;
-  execute("startRecMode",[], 1);
   execute("setPostviewImageSize",["Original"],10);
   execute("setShootMode",["still"],10);
   execute("setBeepMode",["On"],10);
+}
+
+
+
+exports.zoomIn = function(listener){
+  execute("actZoom",["in","1shot"],10,listener);
+}
+
+exports.zoomOut = function(listener){
+  execute("actZoom",["out","1shot"],10,listener);
+}
+
+exports.zoomOutAll = function(listener){
+  execute("actZoom",["out","start"],10,listener);
 }
 
 exports.take = function(listener) {
   execute("actTakePicture",[], 2, listener);
 }
 
+exports.setAFPos = function(x,y,listener) {
+  execute("setTouchAFPosition",[(x*1.0).toString(),(y*1.0).toString()], 2, listener);
+}
+
 exports.__exposedProps__ = {
   setup: "r",
   take: "r",
-  test: "r"
+  test: "r",
+  zoomIn:"r",
+  zoomOut:"r",
+  zoomOutAll:"r",
+  setTouchAFPosition:"r"
 }
