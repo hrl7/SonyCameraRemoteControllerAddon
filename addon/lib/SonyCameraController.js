@@ -9,17 +9,16 @@ const {XMLHttpRequest} = require("sdk/net/xhr");
 let config;
 
 exports.test = function () {
- let observer = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
- let httpObserver = {
-  observe:function (subj,topic,data) {
-   if(topic = "http-on-examine-response"){
-    let ch = subj.QueryInterface(Ci.nsIHttpChannel);
-    //ch.setResponseHeader("Access-Control-Allow-Origin","http://webservice.fabnavi.org",false);
-    ch.setResponseHeader("Access-Control-Allow-Origin","*",false);
-    ch.setResponseHeader("Access-Control-Allow-Methods","POST,GET",false);
-   }}
- };
- observer.addObserver(httpObserver,"http-on-examine-response",false);
+  let observer = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
+  let httpObserver = {
+    observe:function (subj,topic,data) {
+              if(topic = "http-on-examine-response"){
+                let ch = subj.QueryInterface(Ci.nsIHttpChannel);
+                ch.setResponseHeader("Access-Control-Allow-Origin","http://webservice.fabnavi.org",false);
+                ch.setResponseHeader("Access-Control-Allow-Methods","POST,GET",false);
+              }}
+  };
+  observer.addObserver(httpObserver,"http-on-examine-response",false);
 }
 
 function execute(method,params, id, listener) {
