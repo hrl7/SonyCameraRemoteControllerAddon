@@ -35,7 +35,7 @@ function execute(method,params, id, listener) {
     if (listener) {
       let response = JSON.parse(request.responseText);
       let url = response.result[0][0];
-      listener.taken(url,response);
+      listener(url,response);
     }
   };
   let url = "http://"+config.ipaddress+":"+config.port+"/sony/camera";
@@ -46,9 +46,10 @@ function execute(method,params, id, listener) {
 
 exports.setup = function(c) {
   config = c;
-  execute("setPostviewImageSize",["Original"],10);
-  execute("setShootMode",["still"],10);
-  execute("setBeepMode",["On"],10);
+  execute("startRecMode",[],1);
+  execute("setPostviewImageSize",["Original"],2);
+  execute("setShootMode",["still"],3);
+  execute("setBeepMode",["On"],4);
 }
 
 
@@ -66,7 +67,7 @@ exports.zoomOutAll = function(listener){
 }
 
 exports.take = function(listener) {
-  execute("actTakePicture",[], 2, listener);
+  execute("actTakePicture",[], 5, listener);
 }
 
 exports.setAFPos = function(x,y,listener) {
