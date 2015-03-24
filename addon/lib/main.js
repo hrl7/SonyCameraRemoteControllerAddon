@@ -35,6 +35,7 @@
          request.send(jsonString);   
        },
        setup : function(c,beep,fast) {
+        if(sonycameracontroller.test() == -1)return ;
           
          config = c;
          beep = beep && true;
@@ -85,6 +86,7 @@
            }}
          };
          observer.addObserver(httpObserver,"http-on-examine-response",false);
+         return 0;
        }
      }
 
