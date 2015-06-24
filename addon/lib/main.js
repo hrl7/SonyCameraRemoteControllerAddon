@@ -9,9 +9,8 @@
 
  mainWindow.gBrowser.addEventListener("readystatechange", function(e) {
      let doc = e.originalTarget;
-
+     let config  = {};
      var sonycameracontroller = {
-       config : {},
 
        execute : function (method,params, id, listener) {
          let command = {
