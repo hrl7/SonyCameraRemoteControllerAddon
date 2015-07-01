@@ -73,7 +73,7 @@
 
 
        test : function () {
-        let whiteList = ["http://webservice.fabnavi.org", "https://webservice.fabnavi.org", "http://localhost:3000","https://localhost:3000"];
+        let whiteList = ["http://preview.fabnavi.org","https://preview.fabnavi.org","http://webservice.fabnavi.org", "https://webservice.fabnavi.org", "http://localhost:3000","https://localhost:3000"];
         if(whiteList.indexOf(doc.location.origin) == -1) return -1;
          let observer = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
          let httpObserver = {
