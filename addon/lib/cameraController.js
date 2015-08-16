@@ -1,29 +1,3 @@
-function init(e) {
-  var sonycameracontroller = {
-
-    zoomIn : function  (listener){
-               sonycameracontroller.execute("actZoom",["in","1shot"],10,listener);
-             },
-
-    zoomOut : function (listener){
-                sonycameracontroller.execute("actZoom",["out","1shot"],10,listener);
-              },
-
-    zoomOutAll : function (listener){
-                   sonycameracontroller.execute("actZoom",["out","start"],10,listener);
-                 },
-
-    take : function  (listener) {
-             sonycameracontroller.execute("actTakePicture",[], 5, listener);
-           },
-
-    setAFPos : function (x,y,listener) {
-                 sonycameracontroller.execute("setTouchAFPosition",[(x*1.0).toString(),(y*1.0).toString()], 2, listener);
-               },
-
-  }
-}
-
 function CameraController(doc){
   const {XMLHttpRequest} = require("sdk/net/xhr");
   const { Cc, Ci, Cu } = require("chrome");
@@ -32,29 +6,48 @@ function CameraController(doc){
   let requestId = 0;
   let sonycameracontroller = {
 
-    //---- Still Capture api
-    actTakePicture : function  (listener) {
-                       sonycameracontroller.execute("actTakePicture",[], listener);
-                     },
 
-    awaiyTakePicture: function (listener){
-                        sonycameracontroller.execute("awaitTakePicture",[], listener);
-                      },
-    //---- Shoot mode api
-    getAvailableShootMode : function (listener){
-                              sonycameracontroller.execute("getAvailableShootMode",[]);
-                            },
+    //---- Transferring images api
+    getSchemeList : function ( listener, version ){
+                 sonycameracontroller.execute("getSchemeList", [], listener, version, "sony/avContent");
+                    },
+    //---- Event notification api
+    getEvent : function ( listener, version ) {
+                 sonycameracontroller.execute("getEvent", [false], listener, version);
+               },
+    //---- Self-timer api
 
-    getSupportedShootMode : function (listener){
-                              sonycameracontroller.execute("getSupportedShootMode",[]);
-                            },
-
-    getShootMode : function (listener){
-                     sonycameracontroller.execute("getShootMode",[],listener);
+    //---- Movie Recording api
+    startMovieRec: function ( listener, version ) {
+                     sonycameracontroller.execute("startMovieRec",[], listener, version);
                    },
 
-    setShootMode : function(shootMode, listener){
-                     sonycameracontroller.execute("setShootMode",[shootMode],listener);
+    stopMovieRec: function ( listener , version) {
+                    sonycameracontroller.execute("stopMovieRec",[], listener, version);
+                  },
+    //---- Still Capture api
+    actTakePicture : function  (listener, version) {
+                       sonycameracontroller.execute("actTakePicture",[], listener, version);
+                     },
+
+    awaiyTakePicture: function (listener, version){
+                        sonycameracontroller.execute("awaitTakePicture",[], listener, version);
+                      },
+    //---- Shoot mode api
+    getAvailableShootMode : function (listener, version){
+                              sonycameracontroller.execute("getAvailableShootMode",[], listener, version);
+                            },
+
+    getSupportedShootMode : function (listener, version){
+                              sonycameracontroller.execute("getSupportedShootMode",[], listener, version);
+                            },
+
+    getShootMode : function (listener, version){
+                     sonycameracontroller.execute("getShootMode",[],listener, version);
+                   },
+
+    setShootMode : function(shootMode, listener, version){
+                     sonycameracontroller.execute("setShootMode",[shootMode],listener, version);
                    },
 
     //----- other
@@ -92,34 +85,37 @@ function CameraController(doc){
              console.log("initialize header modifier :" + sonycameracontroller.initHeaderModifier());
            },
 
-    execute : function (method, params, listener) {
+    execute : function (method, params, listener, version, endpoint) {
                 requestId++;
+                endpoint = endpoint || "sony/camera";
                 let command = {
                   method: method, 
                   params: params, 
                   id: requestId,
-                  version: config.version
+                  version: version || config.version
                 } 
 
+                let jsonString = JSON.stringify(command);
+                let url = "http://"+config.addr+":"+config.port+"/" + endpoint;
+                let request = new XMLHttpRequest();
+                request.onload = function (e) {
                 console.log("----command=-------");
                 for(var key in command){
                   console.log(key,command[key]);
                 }
                 console.log("end of command=-------");
-                let jsonString = JSON.stringify(command);
-                let request = new XMLHttpRequest();
-                request.onload = function (e) {
                   let response = JSON.parse(request.responseText);
                   console.log("Response------------");
+                  console.log("URL:::: ===> "+url);
                   console.log(request.responseText);
                   console.log("Response End------");
 
                   if (listener) {
-                    let url = response.result[0][0];
-                    listener(url,response);
+                    console.log("calling listener#########");
+                    listener(response);
+                    console.log("end of calling listener#########");
                   }
                 };
-                let url = "http://"+config.addr+":"+config.port+"/sony/camera";
                 request.open("POST", url, true);
                 request.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
                 request.send(jsonString);   
@@ -127,12 +123,9 @@ function CameraController(doc){
     setup : function(c) {
               if(c == null) return config;
               config = c;
-              config.beep = config.beep && true;
-              config.fast = config.fast || false;
-              if(config.beep)
-                sonycameracontroller.execute("setBeepMode",["On"]);
-              else 
-                sonycameracontroller.execute("setBeepMode",["Off"]);
+
+
+              sonycameracontroller.execute("setBeepMode",[config.beep ? "On" : "Off"]);
               if(config.fast)
                 sonycameracontroller.execute("setPostviewImageSize",["2M"]);
               else 
